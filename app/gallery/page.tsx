@@ -1,3 +1,4 @@
+'use client';
 import Image from 'next/image';
 
 import starRight from '../assets/star-right.svg';
@@ -5,10 +6,37 @@ import starLeft from '../assets/star-left.svg';
 import arrow from '../assets/arrow.svg';
 
 import wave from '../assets/wave.svg';
+import ReactConfetti from 'react-confetti';
+import { useEffect, useState } from 'react';
 
 export default function Gallery() {
+  const [numberOfPieces, setNumberOfPieces] = useState(200);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setNumberOfPieces(0);
+    }, 5000);
+
+    return () => clearTimeout(timeout);
+  }, []);
+
   return (
     <div>
+      <ReactConfetti
+        numberOfPieces={numberOfPieces}
+        drawShape={ctx => {
+          ctx.beginPath();
+          for (let i = 0; i < 24; i++) {
+            const angle = 0.35 * i;
+            const x = (0.2 + 1.5 * angle) * Math.cos(angle);
+            const y = (0.2 + 1.5 * angle) * Math.sin(angle);
+            ctx.lineTo(x, y);
+          }
+          ctx.stroke();
+          ctx.closePath();
+        }}
+      />
+
       <header className="flex items-center relative mb-24">
         <Image
           src={starLeft}
@@ -50,6 +78,9 @@ export default function Gallery() {
           <Image
             key={`image-${i + 1}`}
             src={`/${i + 1}.jpg`}
+            priority={true}
+            placeholder="blur"
+            blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/w8AAwAB/5+9f9AAAAABJRU5ErkJggg=="
             alt="A picture of Bubi"
             className="rounded-lg z-10"
             width={150}
